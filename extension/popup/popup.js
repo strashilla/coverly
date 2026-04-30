@@ -79,7 +79,12 @@ async function init() {
     await loadSettings();
 
     // Request job description from current tab
-    await requestJobDescription();
+    try {
+        currentJobDescription = await getJobFromPage();
+    } catch (error) {
+        console.error('Could not get job from page:', error);
+        currentJobDescription = null;
+    }
     updateStatusLine();
 
     generateBtn.addEventListener('click', handleGenerate);
@@ -101,20 +106,37 @@ async function init() {
         updateUI();
     }
 
-    async function requestJobDescription() {
-        try {
-            const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
-            if (tab) {
-                // Send message to content script to get job description
-                const response = await chrome.tabs.sendMessage(tab.id, { type: 'GET_JOB_DESCRIPTION' });
-                if (response && response.jobDescription) {
-                    currentJobDescription = response.jobDescription;
-                    updateStatusLine();
-                }
-            }
-        } catch (error) {
-            console.log('Could not get job description:', error.message);
-        }
+    async function getJobFromPage() {
+      const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
+
+      if (!tab.url.includes('hh.ru') && !tab.url.includes('linkedin.com')) {
+        return null;
+      }
+
+      try {
+        const results = await chrome.scripting.executeScript({
+          target: { tabId: tab.id },
+          func: () => {
+            // hh.ru
+            const titleEl = document.querySelector('[data-qa="vacancy-title"]') || document.querySelector('h1');
+            const descEl = document.querySelector('[data-qa="vacancy-description"]') || document.querySelector('.vacancy-description') || document.querySelector('[class*="vacancy-description"]');
+            const companyEl = document.querySelector('[data-qa="vacancy-company-name"]') || document.querySelector('[class*="company-name"]');
+
+            const title = titleEl ? titleEl.innerText.trim() : '';
+            const desc = descEl ? descEl.innerText.trim() : '';
+            const company = companyEl ? companyEl.innerText.trim() : '';
+
+            if (!desc && !title) return null;
+            return `Position: ${title}\nCompany: ${company}\n\n${desc}`;
+          },
+        });
+
+        const job = results?.[0]?.result;
+        return job || null;
+      } catch (err) {
+        console.error('executeScript error:', err);
+        return null;
+      }
     }
 
     function updateStatusLine() {
@@ -250,6 +272,14 @@ async function init() {
     });
 
     async function handleGenerate() {
+        try {
+            currentJobDescription = await getJobFromPage();
+        } catch (error) {
+            console.error('Could not get job from page:', error);
+            currentJobDescription = null;
+        }
+        updateStatusLine();
+
         // Get resume from storage
         let resume = null;
         try {

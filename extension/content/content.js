@@ -12,7 +12,7 @@
                 company: '.vacancy-company-name, .company-name',
                 description: '.vacancy-section:has(h2:contains("Описание")), .vacancy-description',
             },
-            extractJobDescription: extractHHJob,
+            extractJobDescription: extractFromHH,
         },
         'linkedin.com': {
             selectors: {
@@ -26,6 +26,7 @@
 
     function init() {
         const hostname = window.location.hostname;
+        console.log('Coverly hostname:', window.location.hostname);
         const config = SITE_CONFIGS[hostname.replace('www.', '')];
 
         if (!config) {
@@ -37,21 +38,27 @@
         setTimeout(() => extractAndSendJob(config), 2000);
     }
 
-    function extractHHJob() {
-        const sections = document.querySelectorAll('.vacancy-section');
-        let jobText = '';
+    function extractFromHH() {
+        console.log('Coverly: extracting from HH');
+        console.log(document.title);
 
-        sections.forEach(section => {
-            const heading = section.querySelector('h2');
-            if (heading && heading.textContent.trim()) {
-                const content = section.textContent;
-                if (content.length > 100) {
-                    jobText += content + '\n\n';
-                }
-            }
-        });
+        const titleEl = document.querySelector('[data-qa="vacancy-title"]')
+            || document.querySelector('h1');
 
-        return jobText || document.body.innerText;
+        const descEl = document.querySelector('[data-qa="vacancy-description"]')
+            || document.querySelector('.vacancy-description')
+            || document.querySelector('[class*="vacancy-description"]')
+            || document.querySelector('[class*="description"]');
+
+        const companyEl = document.querySelector('[data-qa="vacancy-company-name"]')
+            || document.querySelector('[class*="company-name"]');
+
+        const title = titleEl?.innerText?.trim() || '';
+        const company = companyEl?.innerText?.trim() || '';
+        const description = descEl?.innerText?.trim() || '';
+
+        const combined = [title, company, description].filter(Boolean).join('\n\n');
+        return combined || document.body.innerText;
     }
 
     function extractLinkedInJob() {
@@ -74,8 +81,9 @@
 
     // Listen for messages from popup
     chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
-        if (message.type === 'GET_JOB_DESCRIPTION') {
+        if (message.type === 'GET_JOB_DESCRIPTION' || message.type === 'GET_JOB') {
             const hostname = window.location.hostname;
+            console.log('Coverly hostname:', window.location.hostname);
             const config = SITE_CONFIGS[hostname.replace('www.', '')];
             
             if (config) {
