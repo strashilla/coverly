@@ -301,8 +301,9 @@ async function init() {
         setLoading(true);
         hideError();
 
+        let response;
         try {
-            const response = await fetch(apiUrl, {
+            response = await fetch(apiUrl, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -326,7 +327,21 @@ async function init() {
                 throw new Error(data.error || t('errorGenerate'));
             }
         } catch (error) {
-            showError(error.message);
+            if (response) {
+                const data = await response.json().catch(() => ({}));
+
+                if (response.status === 429) {
+                    if (data.errorCode === 'RATE_LIMIT') {
+                        showError('Лимит запросов исчерпан. Попробуйте через час.');
+                    } else {
+                        showError('AI сервис перегружен. Попробуйте через минуту.');
+                    }
+                } else {
+                    showError(data.error || t('errorGenerate'));
+                }
+            } else {
+                showError(t('errorGenerate'));
+            }
         } finally {
             setLoading(false);
         }

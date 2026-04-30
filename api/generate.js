@@ -1,7 +1,30 @@
+const ipRequests = new Map();
+const RATE_LIMIT = 10; // запросов
+const RATE_WINDOW = 60 * 60 * 1000; // 1 час в миллисекундах
+
 export default async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+
+  const ip = req.headers['x-forwarded-for'] || req.headers['x-real-ip'] || 'unknown';
+  const now = Date.now();
+
+  if (!ipRequests.has(ip)) {
+    ipRequests.set(ip, { count: 1, resetAt: now + RATE_WINDOW });
+  } else {
+    const data = ipRequests.get(ip);
+    if (now > data.resetAt) {
+      ipRequests.set(ip, { count: 1, resetAt: now + RATE_WINDOW });
+    } else if (data.count >= RATE_LIMIT) {
+      return res.status(429).json({
+        error: 'Too many requests. Try again in an hour.',
+        errorCode: 'RATE_LIMIT',
+      });
+    } else {
+      data.count++;
+    }
+  }
 
   if (req.method === 'OPTIONS') {
     return res.status(200).end();
@@ -39,6 +62,24 @@ export default async function handler(req, res) {
         ],
       }),
     });
+
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({}));
+
+      if (response.status === 429) {
+        return res.status(429).json({
+          error: 'AI service is overloaded. Please try again in a minute.',
+          errorCode: 'GROQ_RATE_LIMIT',
+        });
+      }
+      if (response.status === 401) {
+        return res.status(500).json({
+          error: 'AI service configuration error.',
+          errorCode: 'AUTH_ERROR',
+        });
+      }
+      throw new Error(`Groq API error: ${response.status}`);
+    }
 
     const data = await response.json();
     const coverLetter = data.choices?.[0]?.message?.content;
