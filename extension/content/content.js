@@ -25,14 +25,14 @@
     };
 
     function init() {
-        const hostname = window.location.hostname;
+        const host = window.location.hostname;
         console.log('Coverly hostname:', window.location.hostname);
-        const config = SITE_CONFIGS[hostname.replace('www.', '')];
-
-        if (!config) {
+        if (!host.includes('hh.ru') && !host.includes('linkedin.com')) {
             console.log('Coverly: Site not supported');
             return;
         }
+
+        const config = host.includes('hh.ru') ? SITE_CONFIGS['hh.ru'] : SITE_CONFIGS['linkedin.com'];
 
         // Wait for page to fully load
         setTimeout(() => extractAndSendJob(config), 2000);

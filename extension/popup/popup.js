@@ -93,12 +93,10 @@ async function init() {
 
     async function loadSettings() {
         try {
-            const result = await chrome.storage.local.get(['language', 'apiUrl']);
+            await chrome.storage.local.remove('apiUrl');
+            const result = await chrome.storage.local.get(['language']);
             if (result.language) {
                 currentLang = result.language;
-            }
-            if (result.apiUrl) {
-                apiUrl = result.apiUrl;
             }
         } catch (error) {
             console.error('Failed to load settings:', error);
@@ -130,6 +128,7 @@ async function init() {
             return `Position: ${title}\nCompany: ${company}\n\n${desc}`;
           },
         });
+        console.log('executeScript results:', JSON.stringify(results));
 
         const job = results?.[0]?.result;
         return job || null;
