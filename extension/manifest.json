@@ -16,6 +16,9 @@
         "matches": [
             "*://hh.ru/*",
             "*://*.hh.ru/*",
+            "*://*.headhunter.ru/*",
+            "*://*.rabota.ru/*",
+            "*://*.superjob.ru/*",
             "*://*.linkedin.com/*"
         ],
         "js": ["content/content.js"]

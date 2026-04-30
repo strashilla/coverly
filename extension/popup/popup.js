@@ -55,7 +55,25 @@ const translations = {
 
 let currentLang = 'en';
 let currentJobDescription = null;
+let currentTone = 'formal';
 let apiUrl = 'https://coverly-henna.vercel.app/api/generate';
+
+async function saveToHistory(jobTitle, coverLetter) {
+  const result = await chrome.storage.local.get('history');
+  const history = result.history || [];
+  history.unshift({
+    jobTitle: jobTitle || 'Без названия',
+    coverLetter,
+    date: new Date().toLocaleDateString('ru-RU'),
+  });
+  if (history.length > 5) history.pop();
+  await chrome.storage.local.set({ history });
+}
+
+async function loadHistory() {
+  const result = await chrome.storage.local.get('history');
+  return result.history || [];
+}
 
 document.addEventListener('DOMContentLoaded', init);
 
@@ -68,13 +86,18 @@ async function init() {
     const errorDiv = document.getElementById('error');
     const langToggle = document.getElementById('langToggle');
     const settingsLink = document.getElementById('settingsLink');
+    const historyBtn = document.getElementById('historyBtn');
     const screenMain = document.getElementById('screenMain');
     const screenSettings = document.getElementById('screenSettings');
+    const screenHistory = document.getElementById('screenHistory');
     const backBtn = document.getElementById('backBtn');
+    const backFromHistory = document.getElementById('backFromHistory');
     const dropZone = document.getElementById('dropZone');
     const resumeFile = document.getElementById('resumeFile');
     const resumeText = document.getElementById('resumeText');
     const saveResumeBtn = document.getElementById('saveResumeBtn');
+    const historyList = document.getElementById('historyList');
+    const historyEmpty = document.getElementById('historyEmpty');
 
     // Load saved settings
     await loadSettings();
@@ -95,7 +118,25 @@ async function init() {
       await handleGenerate();
       regenBtn.classList.remove('spinning');
     });
+    historyBtn.addEventListener('click', async () => {
+        screenMain.hidden = true;
+        screenSettings.hidden = true;
+        screenHistory.hidden = false;
+        await renderHistory();
+    });
+    backFromHistory.addEventListener('click', () => {
+        screenHistory.hidden = true;
+        screenSettings.hidden = true;
+        screenMain.hidden = false;
+    });
     langToggle.addEventListener('click', toggleLanguage);
+    document.querySelectorAll('.tone-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.tone-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        currentTone = btn.dataset.tone;
+      });
+    });
 
     async function loadSettings() {
         try {
@@ -113,18 +154,27 @@ async function init() {
     async function getJobFromPage() {
       const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
 
-      if (!tab.url.includes('hh.ru') && !tab.url.includes('linkedin.com')) {
-        return null;
-      }
+      const supportedSites = ['hh.ru', 'headhunter.ru', 'rabota.ru', 'superjob.ru', 'linkedin.com'];
+      if (!supportedSites.some(site => tab.url.includes(site))) return null;
 
       try {
         const results = await chrome.scripting.executeScript({
           target: { tabId: tab.id },
           func: () => {
+            // rabota.ru
+            const rabotaTitle = document.querySelector('.vacancy-title, [class*="vacancy-title"]');
+            const rabotaDesc = document.querySelector('.vacancy-description, [class*="vacancy-description"]');
+            const rabotaCompany = document.querySelector('.company-name, [class*="company-name"]');
+
+            // superjob.ru  
+            const sjTitle = document.querySelector('[class*="VacancyTitle"], h1');
+            const sjDesc = document.querySelector('[class*="VacancyDescription"], [class*="vacancy-description"]');
+            const sjCompany = document.querySelector('[class*="CompanyName"], [class*="company-name"]');
+
             // hh.ru
-            const titleEl = document.querySelector('[data-qa="vacancy-title"]') || document.querySelector('h1');
-            const descEl = document.querySelector('[data-qa="vacancy-description"]') || document.querySelector('.vacancy-description') || document.querySelector('[class*="vacancy-description"]');
-            const companyEl = document.querySelector('[data-qa="vacancy-company-name"]') || document.querySelector('[class*="company-name"]');
+            const titleEl = document.querySelector('[data-qa="vacancy-title"]') || rabotaTitle || sjTitle || document.querySelector('h1');
+            const descEl = document.querySelector('[data-qa="vacancy-description"]') || document.querySelector('.vacancy-description') || rabotaDesc || sjDesc || document.querySelector('[class*="vacancy-description"]');
+            const companyEl = document.querySelector('[data-qa="vacancy-company-name"]') || rabotaCompany || sjCompany || document.querySelector('[class*="company-name"]');
 
             const title = titleEl ? titleEl.innerText.trim() : '';
             const desc = descEl ? descEl.innerText.trim() : '';
@@ -191,8 +241,32 @@ async function init() {
     // Back button handler
     backBtn.addEventListener('click', () => {
         screenSettings.hidden = true;
+        screenHistory.hidden = true;
         screenMain.hidden = false;
     });
+
+    async function renderHistory() {
+        const history = await loadHistory();
+        historyList.innerHTML = '';
+        historyEmpty.hidden = history.length > 0;
+
+        history.forEach((item) => {
+            const card = document.createElement('div');
+            card.className = 'history-item';
+            card.innerHTML = `
+                <div class="history-item-job">${item.jobTitle || 'Без названия'}</div>
+                <div class="history-item-date">${item.date || ''}</div>
+            `;
+            card.addEventListener('click', () => {
+                coverLetterTextarea.value = item.coverLetter || '';
+                resultDiv.hidden = false;
+                screenHistory.hidden = true;
+                screenSettings.hidden = true;
+                screenMain.hidden = false;
+            });
+            historyList.appendChild(card);
+        });
+    }
 
     // Drop zone click handler
     dropZone.addEventListener('click', () => {
@@ -328,6 +402,7 @@ async function init() {
                 body: JSON.stringify({
                     resume,
                     jobDescription: currentJobDescription.text,
+                    tone: currentTone,
                 }),
             });
 
@@ -338,8 +413,10 @@ async function init() {
             const data = await response.json();
 
             if (data.coverLetter) {
-                coverLetterTextarea.value = data.coverLetter;
+                const coverLetter = data.coverLetter;
+                coverLetterTextarea.value = coverLetter;
                 resultDiv.hidden = false;
+                await saveToHistory(currentJobDescription?.title, coverLetter);
             } else {
                 throw new Error(data.error || t('errorGenerate'));
             }

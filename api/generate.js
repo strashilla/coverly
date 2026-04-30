@@ -34,7 +34,12 @@ export default async function handler(req, res) {
     return res.status(405).json({ error: 'Method not allowed' });
   }
 
-  const { resume, jobDescription } = req.body;
+  const { resume, jobDescription, tone } = req.body;
+  const toneInstructions = {
+    formal: 'Use formal, professional tone. Full paragraphs.',
+    friendly: 'Use warm, friendly but professional tone.',
+    short: 'Write a SHORT cover letter, maximum 150 words. Be concise.',
+  };
 
   if (!resume || !jobDescription) {
     return res.status(400).json({ error: 'Missing fields' });
@@ -57,7 +62,7 @@ export default async function handler(req, res) {
           },
           {
             role: 'user',
-            content: `Write a cover letter for this job:\n\n${jobDescription}\n\nMy resume:\n\n${resume}\n\nIMPORTANT RULES:\n- Detect the language of the JOB DESCRIPTION\n- Write the cover letter in the SAME language as the job description\n- If job is in English - write in English\n- If job is in Russian - write in Russian\n- NEVER mix languages\n- 3-4 paragraphs, professional tone`,
+            content: `Write a cover letter for this job:\n\n${jobDescription}\n\nMy resume:\n\n${resume}\n\nIMPORTANT RULES:\n- Detect the language of the JOB DESCRIPTION\n- Write the cover letter in the SAME language as the job description\n- If job is in English - write in English\n- If job is in Russian - write in Russian\n- NEVER mix languages\n- 3-4 paragraphs, professional tone\n\nTone: ${toneInstructions[tone] || toneInstructions.formal}`,
           },
         ],
       }),

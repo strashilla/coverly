@@ -252,6 +252,24 @@ body {
   fill: currentColor;
 }
 
+.history-btn {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  width: 32px;
+  height: 32px;
+  background: none;
+  border: none;
+  color: #555;
+  cursor: pointer;
+  font-size: 16px;
+  transition: color 0.2s;
+}
+
+.history-btn:hover {
+  color: var(--acid);
+}
+
 .copied-msg {
   text-align: center;
   margin-top: 8px;
@@ -298,6 +316,22 @@ body {
 }
 
 .settings-title {
+  font-family: 'Space Mono', monospace;
+  color: var(--acid);
+  font-size: 16px;
+  font-weight: 700;
+}
+
+.screen-header {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 28px;
+  margin-bottom: 16px;
+}
+
+.screen-title {
   font-family: 'Space Mono', monospace;
   color: var(--acid);
   font-size: 16px;
@@ -422,6 +456,28 @@ body {
   color: var(--aqua);
 }
 
+.tone-selector {
+  display: flex;
+  gap: 6px;
+  margin-bottom: 14px;
+}
+
+.tone-btn {
+  flex: 1;
+  padding: 7px 4px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  color: var(--muted);
+  font-size: 11px;
+  cursor: pointer;
+  transition: all 0.15s;
+  font-family: 'DM Sans', sans-serif;
+}
+
+.tone-btn:hover { border-color: var(--aqua); color: var(--text); }
+.tone-btn.active { background: var(--surface2); border-color: var(--acid); color: var(--acid); }
+
 #jobPreview {
   background: var(--surface);
   border: 1px solid var(--border);
@@ -429,6 +485,41 @@ body {
   border-radius: 8px;
   padding: 10px 12px;
   margin-bottom: 14px;
+}
+
+.history-list { display: grid; gap: 8px; padding: 4px 0; }
+
+.history-item {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 10px 12px;
+  cursor: pointer;
+  transition: border-color 0.15s;
+}
+
+.history-item:hover { border-color: var(--aqua); }
+
+.history-item-job {
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--text);
+  margin-bottom: 2px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.history-item-date {
+  font-size: 10px;
+  color: var(--muted);
+}
+
+.history-empty {
+  text-align: center;
+  color: var(--muted);
+  font-size: 13px;
+  padding: 40px 0;
 }
 
 /* Button Icon */
