@@ -27,6 +27,12 @@ const translations = {
 
 let currentLang = 'en';
 
+chrome.storage.local.get('resume', (result) => {
+    if (!result.resume) {
+        document.getElementById('welcomeBanner').style.display = 'block';
+    }
+});
+
 document.addEventListener('DOMContentLoaded', init);
 
 async function init() {

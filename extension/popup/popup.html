@@ -19,6 +19,10 @@
         <span class="status-dot" id="statusDot"></span>
         <span class="status-text" id="statusText" data-i18n="statusOpenJob">Open a job listing page</span>
       </div>
+      <div id="jobPreview" hidden>
+        <div class="job-preview-title" id="jobTitle"></div>
+        <div class="job-preview-company" id="jobCompany"></div>
+      </div>
     </div>
 
     <button id="generateBtn" class="btn-primary">
@@ -30,7 +34,10 @@
     <div id="result" class="result" hidden>
       <label data-i18n="resultLabel">Generated Cover Letter</label>
       <textarea id="coverLetter" readonly data-i18n-placeholder="coverLetterPlaceholder" placeholder="Your cover letter will appear here..."></textarea>
-      <button id="copyBtn" class="btn-secondary" data-i18n="copyBtn">Copy to Clipboard</button>
+      <div class="result-actions">
+        <button id="copyBtn" class="btn-secondary" data-i18n="copyBtn">Копировать</button>
+        <button id="regenBtn" class="btn-regen">↻</button>
+      </div>
     </div>
 
     <div id="error" class="error" hidden></div>

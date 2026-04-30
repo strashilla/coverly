@@ -1,8 +1,14 @@
 // Coverly Background Script
 // Service worker for Chrome extension
 
-chrome.runtime.onInstalled.addListener(() => {
-    console.log('Coverly extension installed');
+chrome.runtime.onInstalled.addListener((details) => {
+    if (details.reason === 'install') {
+        chrome.storage.local.get('resume', (result) => {
+            if (!result.resume) {
+                chrome.tabs.create({ url: chrome.runtime.getURL('settings/settings.html') });
+            }
+        });
+    }
 });
 
 // Handle messages from content script and popup

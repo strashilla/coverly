@@ -62,6 +62,7 @@ document.addEventListener('DOMContentLoaded', init);
 async function init() {
     const generateBtn = document.getElementById('generateBtn');
     const copyBtn = document.getElementById('copyBtn');
+    const regenBtn = document.getElementById('regenBtn');
     const resultDiv = document.getElementById('result');
     const coverLetterTextarea = document.getElementById('coverLetter');
     const errorDiv = document.getElementById('error');
@@ -89,6 +90,11 @@ async function init() {
 
     generateBtn.addEventListener('click', handleGenerate);
     copyBtn.addEventListener('click', handleCopy);
+    regenBtn.addEventListener('click', async () => {
+      regenBtn.classList.add('spinning');
+      await handleGenerate();
+      regenBtn.classList.remove('spinning');
+    });
     langToggle.addEventListener('click', toggleLanguage);
 
     async function loadSettings() {
@@ -125,7 +131,11 @@ async function init() {
             const company = companyEl ? companyEl.innerText.trim() : '';
 
             if (!desc && !title) return null;
-            return `Position: ${title}\nCompany: ${company}\n\n${desc}`;
+            return {
+              text: `Position: ${title}\nCompany: ${company}\n\n${desc}`,
+              title: title,
+              company: company,
+            };
           },
         });
         console.log('executeScript results:', JSON.stringify(results));
@@ -141,14 +151,21 @@ async function init() {
     function updateStatusLine() {
         const statusDot = document.getElementById('statusDot');
         const statusText = document.getElementById('statusText');
+        const jobPreview = document.getElementById('jobPreview');
+        const jobTitle = document.getElementById('jobTitle');
+        const jobCompany = document.getElementById('jobCompany');
         if (currentJobDescription) {
             statusDot.classList.add('active');
             statusText.dataset.i18n = 'statusJobFound';
             statusText.textContent = t('statusJobFound');
+            jobPreview.hidden = false;
+            jobTitle.textContent = currentJobDescription.title || '';
+            jobCompany.textContent = currentJobDescription.company || '';
         } else {
             statusDot.classList.remove('active');
             statusText.dataset.i18n = 'statusOpenJob';
             statusText.textContent = t('statusOpenJob');
+            jobPreview.hidden = true;
         }
     }
 
@@ -310,7 +327,7 @@ async function init() {
                 },
                 body: JSON.stringify({
                     resume,
-                    jobDescription: currentJobDescription,
+                    jobDescription: currentJobDescription.text,
                 }),
             });
 
