@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Coverly - Settings</title>
+    <link rel="stylesheet" href="settings.css">
+</head>
+<body>
+    <div class="container">
+
+        <header>
+            <h1><span style="color:#dbfa31;font-family:'Fira Mono','JetBrains Mono',monospace;">Cover</span><span class="accent" style="color:#4DD0E1;font-family:'Fira Mono','JetBrains Mono',monospace;">ly</span></h1>
+            <p class="subtitle" style="color:#b2bec3;margin-top:0.5em;">AI cover letters in one click — set up your resume once</p>
+        </header>
+
+        <main>
+            <div class="section">
+                <h2>Your Resume</h2>
+                <p class="description">Enter your resume once - it will be saved and used for all applications.</p>
+                <textarea id="resume" placeholder="Paste your resume here..."></textarea>
+                <button id="saveBtn" class="btn-primary">Save Resume</button>
+            </div>
+
+            <div class="section">
+                <h2>Language</h2>
+                <div class="language-switch">
+                    <button id="langEn" class="lang-btn active">English</button>
+                    <button id="langRu" class="lang-btn">Русский</button>
+                </div>
+            </div>
+
+            <div class="section">
+                <h2>API Endpoint</h2>
+                <input type="text" id="apiUrl" class="input" placeholder="https://coverly.vercel.app/api/generate">
+                <p class="hint">Default: https://coverly.vercel.app/api/generate</p>
+            </div>
+
+            <div id="message" class="message hidden"></div>
+        </main>
+    </div>
+    <script src="settings.js"></script>
+</body>
+</html>

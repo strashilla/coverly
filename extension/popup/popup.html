@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Coverly</title>
+  <link rel="stylesheet" href="popup.css">
+  <script src="../lib/pdf.min.js"></script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=DM+Sans:wght@300;400;500&display=swap');
+  </style>
+</head>
+<body>
+  <!-- Main Screen -->
+  <div id="screenMain" class="card">
+    <div class="header">
+      <div class="logo">Cover<span>ly</span><span class="version-badge">v1.0</span></div>
+      <p class="subtitle" data-i18n="subtitle">AI cover letters in one click</p>
+      <div class="status-line">
+        <span class="status-dot" id="statusDot"></span>
+        <span class="status-text" id="statusText" data-i18n="statusOpenJob">Open a job listing page</span>
+      </div>
+    </div>
+
+    <button id="generateBtn" class="btn-primary">
+      <span class="btn-icon">✦</span>
+      <span class="btn-text" data-i18n="generateBtn">Generate Cover Letter</span>
+      <span class="btn-loading" data-i18n="generating" hidden>Generating...</span>
+    </button>
+
+    <div id="result" class="result" hidden>
+      <label data-i18n="resultLabel">Generated Cover Letter</label>
+      <textarea id="coverLetter" readonly data-i18n-placeholder="coverLetterPlaceholder" placeholder="Your cover letter will appear here..."></textarea>
+      <button id="copyBtn" class="btn-secondary" data-i18n="copyBtn">Copy to Clipboard</button>
+    </div>
+
+    <div id="error" class="error" hidden></div>
+
+    <button id="settingsLink" class="settings-link" data-i18n-aria-label="settingsAriaLabel" aria-label="Settings">
+      <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+        <path d="M19.14 12.94c.04-.31.06-.63.06-.94s-.02-.63-.06-.94l2.03-1.58a.5.5 0 0 0 .12-.64l-1.92-3.32a.5.5 0 0 0-.6-.22l-2.39.96a7.03 7.03 0 0 0-1.63-.94l-.36-2.54a.5.5 0 0 0-.5-.42h-3.84a.5.5 0 0 0-.5.42l-.36 2.54c-.58.23-1.12.54-1.63.94l-2.39-.96a.5.5 0 0 0-.6.22L2.71 8.84a.5.5 0 0 0 .12.64l2.03 1.58c-.04.31-.06.63-.06.94s.02.63.06.94l-2.03 1.58a.5.5 0 0 0-.12.64l1.92 3.32a.5.5 0 0 0 .6.22l2.39-.96c.5.39 1.05.71 1.63.94l.36 2.54a.5.5 0 0 0 .5.42h3.84a.5.5 0 0 0 .5-.42l.36-2.54c.58-.23 1.12-.54 1.63-.94l2.39.96a.5.5 0 0 0 .6-.22l1.92-3.32a.5.5 0 0 0-.12-.64l-2.03-1.58zM12 15.5A3.5 3.5 0 1 1 12 8.5a3.5 3.5 0 0 1 0 7z"/>
+      </svg>
+    </button>
+
+    <div class="footer">
+      <span data-i18n="footerText">Coverly • AI cover letters</span> •
+      <button id="langToggle" class="lang-btn">EN</button>
+    </div>
+  </div>
+
+  <!-- Settings Screen -->
+  <div id="screenSettings" class="card" hidden>
+    <div class="settings-header">
+      <button id="backBtn" class="back-btn">←</button>
+      <div class="settings-title" data-i18n="settingsTitle">Settings</div>
+    </div>
+
+    <div class="drop-zone" id="dropZone">
+      <input type="file" id="resumeFile" accept=".pdf" hidden>
+      <svg class="drop-zone-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+        <path d="M19 18a4 4 0 0 0 .86-7.91A7 7 0 0 0 6.13 8.6 4.5 4.5 0 0 0 6.5 18H19zm-7-8.5-3 3h2v3h2v-3h2l-3-3z"/>
+      </svg>
+      <p data-i18n="dropZoneText">Drop PDF here or click to upload</p>
+    </div>
+
+    <div class="divider" data-i18n="dividerOr">or</div>
+
+    <textarea id="resumeText" data-i18n-placeholder="resumeTextPlaceholder" placeholder="Paste your resume text..."></textarea>
+
+    <button id="saveResumeBtn" class="btn-primary" data-i18n="saveResumeBtn">Save Resume</button>
+  </div>
+
+  <script src="popup.js"></script>
+</body>
+</html>
