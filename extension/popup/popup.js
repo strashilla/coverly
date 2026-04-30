@@ -17,6 +17,11 @@ const translations = {
         resultLabel: 'Generated Cover Letter',
         coverLetterPlaceholder: 'Your cover letter will appear here...',
         copyBtn: 'Copy to Clipboard',
+        toneFormal: 'Formal',
+        toneFriendly: 'Friendly',
+        toneShort: 'Short',
+        historyTitle: 'History',
+        historyEmpty: 'No letters yet',
         footerText: 'Coverly • AI cover letters',
         copied: 'Copied!',
         errorNoResume: 'Resume not found. Please configure in Settings.',
@@ -42,6 +47,11 @@ const translations = {
         resultLabel: 'Созданное письмо',
         coverLetterPlaceholder: 'Ваше сопроводительное письмо появится здесь...',
         copyBtn: 'Копировать',
+        toneFormal: 'Формальный',
+        toneFriendly: 'Дружелюбный',
+        toneShort: 'Краткий',
+        historyTitle: 'История',
+        historyEmpty: 'Писем пока нет',
         footerText: 'Coverly • AI cover letters',
         copied: 'Скопировано!',
         errorNoResume: 'Резюме не найдено. Пожалуйста, настройте в Параметрах.',
@@ -511,6 +521,13 @@ async function init() {
             const key = el.getAttribute('data-i18n-aria-label');
             if (translations[currentLang][key]) {
                 el.setAttribute('aria-label', translations[currentLang][key]);
+            }
+        });
+
+        document.querySelectorAll('[data-i18n-title]').forEach(el => {
+            const key = el.getAttribute('data-i18n-title');
+            if (translations[currentLang][key]) {
+                el.setAttribute('title', translations[currentLang][key]);
             }
         });
 

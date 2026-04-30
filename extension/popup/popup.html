@@ -26,9 +26,9 @@
     </div>
 
     <div class="tone-selector">
-      <button class="tone-btn active" data-tone="formal">Формальный</button>
-      <button class="tone-btn" data-tone="friendly">Дружелюбный</button>
-      <button class="tone-btn" data-tone="short">Краткий</button>
+      <button class="tone-btn active" data-tone="formal" data-i18n="toneFormal">Формальный</button>
+      <button class="tone-btn" data-tone="friendly" data-i18n="toneFriendly">Дружелюбный</button>
+      <button class="tone-btn" data-tone="short" data-i18n="toneShort">Краткий</button>
     </div>
 
     <button id="generateBtn" class="btn-primary">
@@ -53,7 +53,7 @@
         <path d="M19.14 12.94c.04-.31.06-.63.06-.94s-.02-.63-.06-.94l2.03-1.58a.5.5 0 0 0 .12-.64l-1.92-3.32a.5.5 0 0 0-.6-.22l-2.39.96a7.03 7.03 0 0 0-1.63-.94l-.36-2.54a.5.5 0 0 0-.5-.42h-3.84a.5.5 0 0 0-.5.42l-.36 2.54c-.58.23-1.12.54-1.63.94l-2.39-.96a.5.5 0 0 0-.6.22L2.71 8.84a.5.5 0 0 0 .12.64l2.03 1.58c-.04.31-.06.63-.06.94s.02.63.06.94l-2.03 1.58a.5.5 0 0 0-.12.64l1.92 3.32a.5.5 0 0 0 .6.22l2.39-.96c.5.39 1.05.71 1.63.94l.36 2.54a.5.5 0 0 0 .5.42h3.84a.5.5 0 0 0 .5-.42l.36-2.54c.58-.23 1.12-.54 1.63-.94l2.39.96a.5.5 0 0 0 .6-.22l1.92-3.32a.5.5 0 0 0-.12-.64l-2.03-1.58zM12 15.5A3.5 3.5 0 1 1 12 8.5a3.5 3.5 0 0 1 0 7z"/>
       </svg>
     </button>
-    <button id="historyBtn" class="history-btn" title="История">🕐</button>
+    <button id="historyBtn" class="history-btn" data-i18n-title="historyTitle" title="История">🕐</button>
 
     <div class="footer">
       <span data-i18n="footerText">Coverly • AI cover letters</span> •
@@ -86,10 +86,10 @@
   <div id="screenHistory" class="card" hidden>
     <div class="screen-header">
       <button id="backFromHistory" class="back-btn">←</button>
-      <span class="screen-title">История</span>
+      <span class="screen-title" data-i18n="historyTitle">История</span>
     </div>
     <div id="historyList" class="history-list"></div>
-    <div id="historyEmpty" class="history-empty">Писем пока нет</div>
+    <div id="historyEmpty" class="history-empty" data-i18n="historyEmpty">Писем пока нет</div>
   </div>
 
   <script src="popup.js"></script>

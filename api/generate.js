@@ -58,11 +58,11 @@ export default async function handler(req, res) {
         messages: [
           {
             role: 'system',
-            content: 'You are a professional cover letter writer. You write ONLY in the language of the job description. You NEVER mix languages. If the job is in Russian - write entirely in Russian. If in English - write entirely in English.',
+            content: 'You are a professional cover letter writer. You write ONLY in the language of the job description. You NEVER mix languages. If the job is in Russian - write entirely in Russian. If in English - write entirely in English. Never use characters from any third language (for example Chinese, Japanese, Spanish) when the target language is Russian or English.',
           },
           {
             role: 'user',
-            content: `Write a cover letter for this job:\n\n${jobDescription}\n\nMy resume:\n\n${resume}\n\nIMPORTANT RULES:\n- Detect the language of the JOB DESCRIPTION\n- Write the cover letter in the SAME language as the job description\n- If job is in English - write in English\n- If job is in Russian - write in Russian\n- NEVER mix languages\n- 3-4 paragraphs, professional tone\n\nTone: ${toneInstructions[tone] || toneInstructions.formal}`,
+            content: `Write a cover letter for this job:\n\n${jobDescription}\n\nMy resume:\n\n${resume}\n\nIMPORTANT RULES:\n- Detect the language of the JOB DESCRIPTION\n- Write the cover letter in the SAME language as the job description\n- If job is in English - write in English\n- If job is in Russian - write in Russian\n- NEVER mix languages\n- Use only Russian or English characters according to detected language\n- Never output Chinese/Japanese/Spanish words or symbols\n- 3-4 paragraphs, professional tone\n\nTone: ${toneInstructions[tone] || toneInstructions.formal}`,
           },
         ],
       }),
