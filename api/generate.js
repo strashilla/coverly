@@ -30,11 +30,11 @@ export default async function handler(req, res) {
         messages: [
           {
             role: 'system',
-            content: 'You are a professional cover letter writer. Write concise, personalized cover letters.',
+            content: 'You are a professional cover letter writer. You write ONLY in the language of the job description. You NEVER mix languages. If the job is in Russian - write entirely in Russian. If in English - write entirely in English.',
           },
           {
             role: 'user',
-            content: `Write a cover letter for this job:\n\n${jobDescription}\n\nMy resume:\n\n${resume}\n\nWrite in the same language as the job description. Be specific, professional, 3-4 paragraphs.`,
+            content: `Write a cover letter for this job:\n\n${jobDescription}\n\nMy resume:\n\n${resume}\n\nIMPORTANT RULES:\n- Write ONLY in Russian if the job description is in Russian\n- Write ONLY in English if the job description is in English\n- Do NOT mix languages under any circumstances\n- Do NOT use words from Chinese, Japanese, Spanish or any other language\n- Be specific, professional, 3-4 paragraphs\n- Do not use placeholder text`,
           },
         ],
       }),
