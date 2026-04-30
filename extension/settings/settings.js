@@ -38,32 +38,22 @@ document.addEventListener('DOMContentLoaded', init);
 async function init() {
     const resumeInput = document.getElementById('resume');
     const saveBtn = document.getElementById('saveBtn');
-    const langEn = document.getElementById('langEn');
-    const langRu = document.getElementById('langRu');
-    const apiUrlInput = document.getElementById('apiUrl');
     const messageDiv = document.getElementById('message');
 
     // Load saved settings
     await loadSettings();
 
     saveBtn.addEventListener('click', handleSave);
-    langEn.addEventListener('click', () => setLanguage('en'));
-    langRu.addEventListener('click', () => setLanguage('ru'));
 
     async function loadSettings() {
         try {
-            const result = await chrome.storage.local.get(['resume', 'language', 'apiUrl']);
+            const result = await chrome.storage.local.get(['resume', 'language']);
             
             if (result.resume) {
                 resumeInput.value = result.resume;
             }
             if (result.language) {
                 currentLang = result.language;
-            }
-            if (result.apiUrl) {
-                apiUrlInput.value = result.apiUrl;
-            } else {
-                apiUrlInput.value = 'https://coverly.vercel.app/api/generate';
             }
             
             updateLanguageUI();
@@ -74,7 +64,6 @@ async function init() {
 
     async function handleSave() {
         const resume = resumeInput.value.trim();
-        const apiUrl = apiUrlInput.value.trim();
 
         if (!resume) {
             showMessage(translations[currentLang].error, 'error');
@@ -84,7 +73,6 @@ async function init() {
         try {
             await chrome.storage.local.set({
                 resume,
-                apiUrl: apiUrl || 'https://coverly.vercel.app/api/generate',
             });
             showMessage(translations[currentLang].saved, 'success');
         } catch (error) {
@@ -103,10 +91,6 @@ async function init() {
     }
 
     function updateLanguageUI() {
-        // Update language buttons
-        document.getElementById('langEn').classList.toggle('active', currentLang === 'en');
-        document.getElementById('langRu').classList.toggle('active', currentLang === 'ru');
-
         // Update texts
         const t = translations[currentLang];
         
@@ -114,10 +98,6 @@ async function init() {
         document.querySelector('.description').textContent = t.resumeDesc;
         resumeInput.placeholder = t.resumePlaceholder;
         saveBtn.textContent = t.saveBtn;
-        
-        document.querySelectorAll('.section h2')[1].textContent = t.languageTitle;
-        document.querySelectorAll('.section h2')[2].textContent = t.apiTitle;
-        document.querySelector('.hint').textContent = t.apiHint;
     }
 
     function showMessage(text, type) {
