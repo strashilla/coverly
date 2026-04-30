@@ -34,7 +34,7 @@ export default async function handler(req, res) {
           },
           {
             role: 'user',
-            content: `Write a cover letter for this job:\n\n${jobDescription}\n\nMy resume:\n\n${resume}\n\nIMPORTANT RULES:\n- Write ONLY in Russian if the job description is in Russian\n- Write ONLY in English if the job description is in English\n- Do NOT mix languages under any circumstances\n- Do NOT use words from Chinese, Japanese, Spanish or any other language\n- Be specific, professional, 3-4 paragraphs\n- Do not use placeholder text`,
+            content: `Write a cover letter for this job:\n\n${jobDescription}\n\nMy resume:\n\n${resume}\n\nIMPORTANT RULES:\n- Detect the language of the JOB DESCRIPTION\n- Write the cover letter in the SAME language as the job description\n- If job is in English - write in English\n- If job is in Russian - write in Russian\n- NEVER mix languages\n- 3-4 paragraphs, professional tone`,
           },
         ],
       }),
