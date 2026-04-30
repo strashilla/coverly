@@ -55,7 +55,7 @@ const translations = {
 
 let currentLang = 'en';
 let currentJobDescription = null;
-let apiUrl = 'https://coverly.vercel.app/api/generate';
+let apiUrl = 'https://coverly-henna.vercel.app/api/generate';
 
 document.addEventListener('DOMContentLoaded', init);
 

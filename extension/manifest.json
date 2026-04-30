@@ -8,7 +8,7 @@
         "default_title": "Coverly - generate cover letter"
     },
     "permissions": ["activeTab", "storage"],
-    "host_permissions": ["https://coverly.vercel.app/*", "http://localhost:3000/*"],
+    "host_permissions": ["https://coverly-henna.vercel.app/*"],
     "background": {
         "service_worker": "background/background.js"
     },
