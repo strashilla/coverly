@@ -1,5 +1,3 @@
-// Coverly Popup Script
-
 const translations = {
     en: {
         settingsAriaLabel: 'Settings',
@@ -29,6 +27,7 @@ const translations = {
         errorServer: 'Server error',
         errorCopy: 'Failed to copy to clipboard',
         errorGenerate: 'Failed to generate cover letter',
+        errorApiNotConfigured: 'Set COVERLY_API_URL in extension/config.js to your deployed /api/generate URL.',
         openSettings: 'Open Settings',
     },
     ru: {
@@ -59,6 +58,7 @@ const translations = {
         errorServer: 'Ошибка сервера',
         errorCopy: 'Не удалось скопировать',
         errorGenerate: 'Не удалось создать письмо',
+        errorApiNotConfigured: 'Укажи COVERLY_API_URL в extension/config.js (URL твоего /api/generate).',
         openSettings: 'Открыть настройки',
     },
 };
@@ -66,7 +66,7 @@ const translations = {
 let currentLang = 'en';
 let currentJobDescription = null;
 let currentTone = 'formal';
-let apiUrl = 'https://coverly-henna.vercel.app/api/generate';
+let apiUrl = globalThis.COVERLY_API_URL;
 
 async function saveToHistory(jobTitle, coverLetter) {
   const result = await chrome.storage.local.get('history');
@@ -109,10 +109,8 @@ async function init() {
     const historyList = document.getElementById('historyList');
     const historyEmpty = document.getElementById('historyEmpty');
 
-    // Load saved settings
     await loadSettings();
 
-    // Request job description from current tab
     try {
         currentJobDescription = await getJobFromPage();
     } catch (error) {
@@ -171,17 +169,14 @@ async function init() {
         const results = await chrome.scripting.executeScript({
           target: { tabId: tab.id },
           func: () => {
-            // rabota.ru
             const rabotaTitle = document.querySelector('.vacancy-title, [class*="vacancy-title"]');
             const rabotaDesc = document.querySelector('.vacancy-description, [class*="vacancy-description"]');
             const rabotaCompany = document.querySelector('.company-name, [class*="company-name"]');
 
-            // superjob.ru  
             const sjTitle = document.querySelector('[class*="VacancyTitle"], h1');
             const sjDesc = document.querySelector('[class*="VacancyDescription"], [class*="vacancy-description"]');
             const sjCompany = document.querySelector('[class*="CompanyName"], [class*="company-name"]');
 
-            // hh.ru
             const titleEl = document.querySelector('[data-qa="vacancy-title"]') || rabotaTitle || sjTitle || document.querySelector('h1');
             const descEl = document.querySelector('[data-qa="vacancy-description"]') || document.querySelector('.vacancy-description') || rabotaDesc || sjDesc || document.querySelector('[class*="vacancy-description"]');
             const companyEl = document.querySelector('[data-qa="vacancy-company-name"]') || rabotaCompany || sjCompany || document.querySelector('[class*="company-name"]');
@@ -229,10 +224,8 @@ async function init() {
         }
     }
 
-    // Settings link handler - switch to settings screen
     settingsLink.addEventListener('click', async (e) => {
         e.preventDefault();
-        // Load saved resume
         try {
             const result = await chrome.storage.local.get('resume');
             if (result.resume) {
@@ -248,7 +241,6 @@ async function init() {
         screenSettings.hidden = false;
     });
 
-    // Back button handler
     backBtn.addEventListener('click', () => {
         screenSettings.hidden = true;
         screenHistory.hidden = true;
@@ -278,12 +270,10 @@ async function init() {
         });
     }
 
-    // Drop zone click handler
     dropZone.addEventListener('click', () => {
         resumeFile.click();
     });
 
-    // Drag & drop events
     dropZone.addEventListener('dragover', (e) => {
         e.preventDefault();
         e.stopPropagation();
@@ -306,7 +296,6 @@ async function init() {
         }
     });
 
-    // Resume file input handler
     resumeFile.addEventListener('change', async (e) => {
         const file = e.target.files[0];
         if (file) {
@@ -314,7 +303,6 @@ async function init() {
         }
     });
 
-    // Handle PDF file
     async function handleFile(file) {
         if (file.type !== 'application/pdf') {
             showError('Please select a PDF file');
@@ -346,13 +334,11 @@ async function init() {
         }
     }
 
-    // Save resume button handler
     saveResumeBtn.addEventListener('click', async () => {
         const text = resumeText.value.trim();
         if (text) {
             try {
                 await chrome.storage.local.set({ resume: text });
-                // Show confirmation message
                 saveResumeBtn.textContent = `✓ ${t('saveResumeDone')}`;
                 saveResumeBtn.style.background = 'var(--aqua)';
                 saveResumeBtn.style.color = 'var(--dark)';
@@ -360,7 +346,6 @@ async function init() {
                     saveResumeBtn.textContent = t('saveResumeBtn');
                     saveResumeBtn.style.background = '';
                     saveResumeBtn.style.color = '';
-                    // Switch back to main screen
                     screenSettings.hidden = true;
                     screenMain.hidden = false;
                     resumeText.value = '';
@@ -380,7 +365,6 @@ async function init() {
         }
         updateStatusLine();
 
-        // Get resume from storage
         let resume = null;
         try {
             const result = await chrome.storage.local.get('resume');
@@ -396,6 +380,11 @@ async function init() {
 
         if (!currentJobDescription) {
             showError(t('errorNoJob'));
+            return;
+        }
+
+        if (!apiUrl || String(apiUrl).includes('YOUR_VERCEL_PROJECT')) {
+            showError(t('errorApiNotConfigured'));
             return;
         }
 
@@ -482,7 +471,6 @@ async function init() {
         errorDiv.hidden = true;
     }
 
-    // Language functions
     function t(key) {
         return translations[currentLang][key] || translations.en[key] || key;
     }
@@ -498,10 +486,8 @@ async function init() {
     }
 
     function updateUI() {
-        // Update button text
         langToggle.textContent = currentLang.toUpperCase();
 
-        // Update all elements with data-i18n attribute
         document.querySelectorAll('[data-i18n]').forEach(el => {
             const key = el.getAttribute('data-i18n');
             if (translations[currentLang][key]) {
@@ -509,7 +495,6 @@ async function init() {
             }
         });
 
-        // Update placeholders
         document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
             const key = el.getAttribute('data-i18n-placeholder');
             if (translations[currentLang][key]) {

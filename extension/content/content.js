@@ -1,10 +1,6 @@
-// Coverly Content Script
-// Extracts job description from career sites
-
 (function() {
     'use strict';
 
-    // Configuration for supported sites
     const SITE_CONFIGS = {
         'hh.ru': {
             selectors: {
@@ -34,7 +30,6 @@
 
         const config = host.includes('hh.ru') ? SITE_CONFIGS['hh.ru'] : SITE_CONFIGS['linkedin.com'];
 
-        // Wait for page to fully load
         setTimeout(() => extractAndSendJob(config), 2000);
     }
 
@@ -71,7 +66,6 @@
             const jobDescription = config.extractJobDescription();
 
             if (jobDescription && jobDescription.length > 50) {
-                // Store for later use
                 window.__coverlyJobDescription = jobDescription;
             }
         } catch (error) {
@@ -79,7 +73,6 @@
         }
     }
 
-    // Listen for messages from popup
     chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
         if (message.type === 'GET_JOB_DESCRIPTION' || message.type === 'GET_JOB') {
             const hostname = window.location.hostname;
@@ -96,7 +89,6 @@
         return true;
     });
 
-    // Run when DOM is ready
     if (document.readyState === 'loading') {
         document.addEventListener('DOMContentLoaded', init);
     } else {

@@ -5,10 +5,22 @@
     "description": "Coverly генерирует сопроводительные письма для вакансий с помощью AI за один клик. Открой вакансию на hh.ru или LinkedIn.",
     "action": {
         "default_popup": "popup/popup.html",
-        "default_title": "Coverly - generate cover letter"
+        "default_title": "Coverly - generate cover letter",
+        "default_icon": {
+            "16": "icons/content.png",
+            "32": "icons/content.png",
+            "48": "icons/content.png",
+            "128": "icons/content.png"
+        }
+    },
+    "icons": {
+        "16": "icons/content.png",
+        "32": "icons/content.png",
+        "48": "icons/content.png",
+        "128": "icons/content.png"
     },
     "permissions": ["activeTab", "storage", "scripting"],
-    "host_permissions": ["https://coverly-henna.vercel.app/*"],
+    "host_permissions": ["https://*.vercel.app/*"],
     "background": {
         "service_worker": "background/background.js"
     },

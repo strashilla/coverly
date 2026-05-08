@@ -1,5 +1,3 @@
-// Coverly Settings Script
-
 const translations = {
     en: {
         resumeTitle: 'Your Resume',
@@ -8,7 +6,7 @@ const translations = {
         saveBtn: 'Save Resume',
         languageTitle: 'Language',
         apiTitle: 'API Endpoint',
-        apiHint: 'Default: https://coverly.vercel.app/api/generate',
+        apiHint: 'Set your URL in extension/config.js (COVERLY_API_URL).',
         saved: 'Resume saved successfully!',
         error: 'Failed to save settings',
     },
@@ -19,7 +17,7 @@ const translations = {
         saveBtn: 'Сохранить резюме',
         languageTitle: 'Язык',
         apiTitle: 'API Endpoint',
-        apiHint: 'По умолчанию: https://coverly.vercel.app/api/generate',
+        apiHint: 'Укажи URL в extension/config.js (COVERLY_API_URL).',
         saved: 'Резюме успешно сохранено!',
         error: 'Не удалось сохранить настройки',
     },
@@ -40,7 +38,6 @@ async function init() {
     const saveBtn = document.getElementById('saveBtn');
     const messageDiv = document.getElementById('message');
 
-    // Load saved settings
     await loadSettings();
 
     saveBtn.addEventListener('click', handleSave);
@@ -91,7 +88,6 @@ async function init() {
     }
 
     function updateLanguageUI() {
-        // Update texts
         const t = translations[currentLang];
         
         document.querySelector('h2').textContent = t.resumeTitle;

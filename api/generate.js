@@ -45,6 +45,13 @@ export default async function handler(req, res) {
     return res.status(400).json({ error: 'Missing fields' });
   }
 
+  if (!process.env.GROQ_API_KEY) {
+    return res.status(500).json({
+      error: 'Server misconfiguration: GROQ_API_KEY is not set.',
+      errorCode: 'MISSING_API_KEY',
+    });
+  }
+
   try {
     const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
       method: 'POST',
