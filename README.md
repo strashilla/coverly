@@ -15,9 +15,8 @@
 
 ## Превью
 
-> Сюда можно добавить скриншот: попап расширения на фоне страницы с вакансией.
+<img width="363" height="401" alt="image" src="https://github.com/user-attachments/assets/f599241e-d6fd-4ad2-bb1a-527c49efc927" />
 
-<!-- ![Превью](docs/preview.png) -->
 
 ---
 
